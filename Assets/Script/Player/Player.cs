@@ -1,127 +1,220 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Reflection;
+using System;
 
 public class Player : MonoBehaviour
-{
-
+{ 
     public int CheckImage;
-    public GameObject Nulclaer;
     public GameObject HomingMissile;
     public GameObject CircleBullet;
     public float Speed;
-    public float CircleTiming;
     public Transform Pos;
     public GameObject LaserObject;
-    CamaraShake camaraShake;
-
+    public AudioSource Gun;
+    CameraShake camaraShake;
+    PlayerSkil skil;
+    PlayerImage playerImage;
+    PlayerBust bust;
+    BackGroundMove groundMove;
     float BulletTiming;
     float LaserWidth = 0;
+    //플레이어 수치 관련 수치
 
     int HomingMissileCount;
-    int NulclaerCount;
-    int JumpCount;
+    public int JumpCount;
     bool EneryBoom = false;
-
+    int BulletCount = 50;
     // Start is called before the first frame update
     void Start()
     {
-        camaraShake = GameObject.Find("Main Camera").GetComponent<CamaraShake>();
-        JumpCount = 1;
-        HomingMissileCount = 3;
         BulletTiming = 0;
+        Speed = transform.parent.GetComponent<CharacterParent>().GetGameData().Speed;
+        JumpCount = 1;
     }
 
+    private void FixedUpdate()
+    {
+        skil = transform.parent.GetComponent<PlayerSkil>();
+        camaraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
+        playerImage = GameObject.Find("PlayerManager").GetComponent<PlayerImage>();
+        bust = transform.GetComponent<PlayerBust>();
+        HomingMissileCount = 3;
+        groundMove = GameObject.Find("GroundManager").GetComponent<BackGroundMove>();
+    }
     // Update is called once per frame
     void Update()
     {
-        if (BulletTiming > 0.05f && EneryBoom == false)
+        if (skil.GetSkil() == false)
         {
-            for (int i = CheckImage + 3; i < this.transform.parent.childCount; i++)
+            //총알 자동 발사
+            if (Input.GetKey(KeyCode.A) && BulletCount >0)
             {
-                if (this.transform.parent.GetChild(i).gameObject.activeSelf == false)
+
+                if (BulletTiming > 0.125f && EneryBoom == false)
                 {
-                    this.transform.parent.GetChild(i).position = Pos.position;
-                    this.transform.parent.GetChild(i).gameObject.SetActive(true);
-                    break;
+                    for (int i = CheckImage + 3; i < this.transform.parent.childCount; i++)
+                    {
+                        if (this.transform.parent.GetChild(i).gameObject.activeSelf == false)
+                        {
+                            this.transform.parent.GetChild(i).position = transform.position;
+                            this.transform.parent.GetChild(i).gameObject.SetActive(true);
+                            break;
+                        }
+                    }
+                    Gun.Play();
+                    BulletTiming = 0;
+                    BulletCount--;
+                    playerImage.BulletText(BulletCount.ToString());
                 }
-         
             }
-            BulletTiming = 0;
-        }
-
-
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            transform.position += transform.right * Time.deltaTime;
-        }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            transform.position -= transform.right * Time.deltaTime;
-        }
-        if (Input.GetKeyDown(KeyCode.Space) && JumpCount > 0)
-        {
-            Rigidbody2D Check = GetComponent<Rigidbody2D>();
-            Check.AddForce(new Vector2(0, 300));
-            JumpCount -= 1;
-        }
-
-        
-
-        if (Input.GetKey(KeyCode.R))
-        {
-            LineRenderer Line = transform.parent.GetComponent<LineRenderer>();
-            Vector3[] Linepos = new Vector3[4];
-            Linepos[0] = new Vector3(GameObject.Find("Pos").transform.position.x, GameObject.Find("Pos").transform.position.y + LaserWidth, 0);
-            Linepos[1] = new Vector3(GameObject.Find("Pos").transform.position.x + 30, GameObject.Find("Pos").transform.position.y+LaserWidth, 0);
-            Linepos[2] = new Vector3(GameObject.Find("Pos").transform.position.x + 30, GameObject.Find("Pos").transform.position.y- LaserWidth, 0);
-            Linepos[3] = new Vector3(GameObject.Find("Pos").transform.position.x, GameObject.Find("Pos").transform.position.y-LaserWidth, 0);
-            Line.SetPositions(Linepos);
-            Line.enabled = true;
-
-            if (LaserWidth < 0.5f)
-                LaserWidth += 0.3f * Time.deltaTime;
-            EneryBoom = true;
-        }
-        else if (Input.GetKeyUp(KeyCode.R))
-        {
-            camaraShake.ShakeStart = true;
-            PhysicsLaser(transform.parent.GetComponent<LineRenderer>());
-            //LaserObject.SetActive(true);
-        }
-        else
-        {
-            LineRenderer Line = transform.parent.GetComponent<LineRenderer>();
-            Line.enabled = false;
-            LaserWidth = 0;
-            EneryBoom = false;
-        }
-
-        if (Input.GetKeyDown(KeyCode.W) && GameObject.Find("HomingMissile") == null)
-        {
-            for (int i = 0; i < HomingMissileCount; i++)
+            else if(Input.GetKey(KeyCode.A) && BulletCount <= 1)
             {
-                GameObject A = Instantiate(HomingMissile, Pos.position, Quaternion.identity);
-                A.name = "HomingMissile";
+               playerImage.BulletRed(ref BulletCount);
+            }
+            else if(Input.GetKeyUp(KeyCode.A))
+            {
+                Gun.Stop();
             }
 
-        }
-        if (Input.GetKeyDown(KeyCode.Z) && NulclaerCount > 0)
-        {
+            //플레이어 움직임
+            if (Input.GetKey(KeyCode.RightArrow) && EneryBoom == false)
+            {
+                transform.position += transform.right * Time.deltaTime * Speed;
+                transform.GetComponent<SpriteRenderer>().flipX = false;
+                groundMove.RightMove();
+            }
+            else if (Input.GetKey(KeyCode.LeftArrow) && EneryBoom == false)
+            {
+                transform.position -= transform.right * Time.deltaTime * Speed;
+                transform.GetComponent<SpriteRenderer>().flipX = true;
+                groundMove.LeftMove();
+            }
+            if (Input.GetKey(KeyCode.UpArrow))
+            {
+                for(int i=CheckImage+3; i<transform.parent.childCount; i++)
+                {
+                    if (this.transform.parent.GetChild(i).gameObject.activeSelf == false)
+                    {
+                        this.transform.parent.GetChild(i).position = Pos.position;
+                        if (transform.GetComponent<SpriteRenderer>().flipX)
+                        {
+                            transform.parent.GetChild(i).rotation = Quaternion.Euler(0, 0, -90);
+                        }
+                        else
+                        {
+                            transform.parent.GetChild(i).rotation = Quaternion.Euler(0, 0, 90);
+                        }
+                        
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = CheckImage + 3; i < transform.parent.childCount; i++)
+                {
+                    if (this.transform.parent.GetChild(i).gameObject.activeSelf == false)
+                    {
+                        this.transform.parent.GetChild(i).position = Pos.position;
+                        transform.parent.GetChild(i).rotation = Quaternion.Euler(0, 0, 0);
+                        break;
+                    }
+                }
 
-        }
+            }
+            if (Input.GetKeyDown(KeyCode.Space) && JumpCount > 0&& EneryBoom == false) 
+            {
+                Rigidbody2D Check = GetComponent<Rigidbody2D>();
+                Check.AddForce(new Vector2(0, 300));
+                JumpCount -= 1;
+            }
 
-        if (Input.GetKeyDown(KeyCode.Q) && CircleTiming > 0.5f && CircleBullet.activeSelf == false)
-        {
-            CircleBullet.transform.position = Pos.position;
-            CircleBullet.SetActive(true);
-            CircleTiming = 0;
-        }
 
-        BulletTiming += Time.deltaTime;
-        CircleTiming += Time.deltaTime;
+            //플레이어 스킬
+            if (Input.GetKeyDown(KeyCode.Q) && playerImage.ReturnSkil(0).fillAmount >= 1)
+            {
+                CircleBullet.transform.position = Pos.position;
+                CircleBullet.SetActive(true);
+                playerImage.ReturnSkil(0).fillAmount = 0;
+            }
+
+            if (Input.GetKeyDown(KeyCode.W) && playerImage.ReturnSkil(1).fillAmount >= 1)
+            {
+                for (int i = 1; i < 4; i++)
+                {
+                    transform.GetChild(i).gameObject.SetActive(true);
+                    transform.GetChild(i).gameObject.transform.position = Pos.position;
+                    transform.GetChild(i).GetComponentInChildren<HomingMissile>().VsalueList = i-1;
+                }
+                playerImage.ReturnSkil(1).fillAmount = 0;
+            }
+
+            if (Input.GetKeyDown(KeyCode.E) && playerImage.ReturnSkil(3).fillAmount >= 1)
+            {
+                bust.enabled = true;
+                playerImage.ReturnSkil(3).fillAmount = 0;
+            }
+            if (playerImage.ReturnSkil(4).fillAmount >= 1)
+            { 
+                if (Input.GetKey(KeyCode.R))
+                {
+                    LineRenderer Line = transform.parent.GetComponent<LineRenderer>();
+                    Vector3[] Linepos = new Vector3[4];
+                    if (transform.GetComponent<SpriteRenderer>().flipX)
+                    {
+                        Linepos[0] = new Vector3(transform.position.x, transform.position.y + LaserWidth, 0) - transform.right; 
+                        Linepos[1] = new Vector3(transform.position.x - 30,transform.position.y + LaserWidth, 0) - transform.right; 
+                        Linepos[2] = new Vector3(transform.position.x - 30, transform.position.y - LaserWidth, 0) - transform.right; 
+                        Linepos[3] = new Vector3(transform.position.x, transform.position.y - LaserWidth, 0) - transform.right; 
+                    }
+                    else
+                    {
+                        Linepos[0] = new Vector3(transform.position.x, transform.position.y + LaserWidth, 0)+transform.right;
+                        Linepos[1] = new Vector3(transform.position.x + 30, transform.position.y + LaserWidth, 0)  +transform.right;
+                        Linepos[2] = new Vector3(transform.position.x + 30, transform.position.y - LaserWidth, 0) + transform.right; 
+                        Linepos[3] = new Vector3(transform.position.x, transform.position.y - LaserWidth, 0) + transform.right; 
+                    }
+                   
+                    Line.SetPositions(Linepos);
+                    Line.enabled = true;
+
+                    if (LaserWidth < 0.5f)
+                        LaserWidth += 0.1f * Time.deltaTime;
+                    EneryBoom = true;
+
+                }
+                else if (Input.GetKeyUp(KeyCode.R) && playerImage.ReturnSkil(4).fillAmount >= 1)
+                {
+                    camaraShake.ShakeStart = true;
+                    PhysicsLaser(transform.parent.GetComponent<LineRenderer>());
+                    GameObject.Find("Main Camera").GetComponent<CameraShake>().SetAmount(LaserWidth / 2.5f);
+                    LaserObject.SetActive(true);
+                    playerImage.ReturnSkil(4).fillAmount = 0;
+                }
+               
+            }
+            else
+            {
+                LineRenderer Line = transform.parent.GetComponent<LineRenderer>();
+                Line.enabled = false;
+                LaserWidth = 0;
+                EneryBoom = false;
+            }
+
+            if (Input.GetKeyDown(KeyCode.U) && playerImage.ReturnSkil(2).fillAmount >=1)
+            {
+                playerImage.ReturnSkil(4).fillAmount = 0;
+                StartCoroutine(skil.ZoomInit());
+                transform.GetComponentInParent<CharacterParent>().SetShield(true);
+            }
+
+            
+            BulletTiming += Time.deltaTime;
+        }
     }
-
     private void OnDestroy()
     {
         if (transform.parent.GetChild(1).tag != "Player")
@@ -136,20 +229,23 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ground")
+        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "DownGround")
         {
             JumpCount = 1;
         }
     }
 
-    private void OnDrawGizmos()
+   public void SpeedSet(float Value)
     {
-
-        Vector3 Size = Dir(transform.parent.GetComponent<LineRenderer>().GetPosition(0), transform.parent.GetComponent<LineRenderer>().GetPosition(2));
-        Vector3 Center = (transform.parent.GetComponent<LineRenderer>().GetPosition(0) + transform.parent.GetComponent<LineRenderer>().GetPosition(2))/2;
-        Gizmos.DrawCube(Center, Size);
+            Speed = Value;
+            Debug.Log(Speed);
     }
 
+    public void SpeedReturn()
+    {
+       Speed /=1.3f;
+    }
+    
 
     Vector3 Dir(Vector3 A, Vector3 B)
     {
@@ -157,33 +253,38 @@ public class Player : MonoBehaviour
         return C;
     }
 
-   public void PhysicsLaser(LineRenderer PhysicsLaser)
+    void PhysicsLaser(LineRenderer PhysicsLaser)
     {
         Vector2 Size = Dir(transform.parent.GetComponent<LineRenderer>().GetPosition(0), transform.parent.GetComponent<LineRenderer>().GetPosition(2));
         GameObject Laser = Instantiate(LaserObject);
         Laser.GetComponent<TrailRenderer>().startWidth = Laser.GetComponent<TrailRenderer>().endWidth = Size.y;
-        RaycastHit2D[] hit = Physics2D.BoxCastAll(PhysicsLaser.GetPosition(0), Size ,0,  PhysicsLaser.GetPosition(2));
-        for (int i=0; i<hit.Length; i++)
+        RaycastHit2D[] hit = Physics2D.BoxCastAll(PhysicsLaser.GetPosition(0), Size, 0, PhysicsLaser.GetPosition(2));
+        for (int i = 0; i < hit.Length; i++)
         {
             if (hit[i])
             {
                 switch (hit[i].transform.gameObject.tag)
                 {
                     case "Bullet":
-                        if (hit[i].transform.GetComponent<Bullet>().Character == Bullet.CharacterList.EnemyCharacter)
+                        if (hit[i].transform.parent.GetChild(0).name != "PlayerImage"&&hit[i].transform.parent.GetComponent<CharacterParent>().GetCharacter(hit[i].transform.gameObject) != CharacterList.PlayerCharacter)
                         {
                             hit[i].transform.gameObject.SetActive(false);
                         }
                         break;
                     case "Enemy":
-                        Destroy(hit[i].transform.gameObject);
+                        hit[i].transform.parent.GetComponent<CharacterParent>().Damage(450 + (LaserWidth * 240 * 10), DefList.Energy);
                         break;
                     default:
                         break;
                 }
             }
         }
-       
+
     }
+  
+
+   
 }
+
+
 

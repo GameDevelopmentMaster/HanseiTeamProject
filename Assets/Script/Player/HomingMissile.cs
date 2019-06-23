@@ -4,72 +4,85 @@ using UnityEngine;
 
 public class HomingMissile : MonoBehaviour
 {
-    bool Trigger;
-    bool ShootingStart;
+    public bool upgrade = false;
+    public bool Trigger;
+    public bool ShootingStart;
     public GameObject[] Enemy;
-    Vector3 MinDir;
+    public Vector3 MinDir;
     public int Num;
     public float Speed = 1.0f;
-    // Start is called before the first frame update
-    void Start()
+    public int VsalueList;
+
+    private void OnEnable()
     {
+        ShootingStart = false;
         Trigger = false;
         Enemy = GameObject.FindGameObjectsWithTag("Enemy");
-        if (Enemy.Length != 0)
+
+        if (Enemy.Length > VsalueList)
         {
             MinDir = new Vector3();
             MinDir.Set(100000, 1000000, 100000);
             for (int i = 0; i < Enemy.Length; i++)
             {
-                if (Vector3.Distance(Enemy[i].transform.position, transform.position) < Vector3.Distance(MinDir, transform.position) && Enemy[i].GetComponent<EnemyController>().Check == false)
+                if (upgrade == false)
                 {
-                    MinDir.x = Enemy[i].transform.position.x;
-                    MinDir.y = Enemy[i].transform.position.y;
-                    Num = i;
-                }
-            }
-            ShootingStart = true;
-            Enemy[Num].GetComponent<EnemyController>().Check = true;
-        }
-        else
-        {
-            Destroy(this.gameObject);
-        }
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (ShootingStart)
-        {
-            if (Enemy[Num] == null)
-            {
-                Enemy = GameObject.FindGameObjectsWithTag("Enemy");
-                if (Enemy.Length != 0)
-                {
-                    MinDir = new Vector3();
-                    MinDir.Set(100000, 1000000, 100000);
-                    for (int i = 0; i < Enemy.Length; i++)
+                    if (Enemy[i].GetComponentInParent<CharacterParent>().GetCharacter(Enemy[i].transform.parent.gameObject) == CharacterList.AirCharacter)
                     {
-                        if (Vector3.Distance(Enemy[i].transform.position, transform.position) < Vector3.Distance(MinDir, transform.position) && Enemy[i].GetComponent<EnemyController>().Check == false)
+                        if (Vector3.Distance(Enemy[i].transform.position, transform.position) < Vector3.Distance(MinDir, transform.position) && Enemy[i].GetComponentInParent<CharacterParent>().Check == false)
                         {
                             MinDir.x = Enemy[i].transform.position.x;
                             MinDir.y = Enemy[i].transform.position.y;
                             Num = i;
                         }
+                        ShootingStart = true;
+
                     }
                 }
-                else
+                else if(upgrade == true)
                 {
-                    Destroy(this.gameObject);
+                    if (Vector3.Distance(Enemy[i].transform.position, transform.position) < Vector3.Distance(MinDir, transform.position) && Enemy[i].GetComponentInParent<CharacterParent>().Check == false)
+                    {
+                        MinDir.x = Enemy[i].transform.position.x;
+                        MinDir.y = Enemy[i].transform.position.y;
+                        Num = i;
+                    }
+                    ShootingStart = true;
+
                 }
 
             }
+            Enemy[Num].GetComponentInParent<CharacterParent>().Check = true;
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
 
+
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+       
+
+       
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (upgrade == false && Enemy[Num].transform.parent.gameObject.name != "AirEnemy")
+        {
+               transform.gameObject.SetActive(false);
+        }
+        if (ShootingStart)
+        {
             Vector3 ToDir = Vector3.Normalize(Enemy[Num].transform.position - transform.position);
             transform.position += new Vector3(ToDir.x * Time.deltaTime * Speed, ToDir.y * Time.deltaTime * Speed);
             transform.Rotate(0, 0, Quaternion.Dot(Enemy[Num].transform.rotation, transform.rotation), Space.World);
+
         }
     }
 
@@ -78,8 +91,9 @@ public class HomingMissile : MonoBehaviour
         if (collision.tag == "Enemy" && Trigger == false)
         {
             Trigger = true;
-            Destroy(collision.gameObject);
-            Destroy(this.gameObject);
+            collision.transform.parent.GetComponent<CharacterParent>().Damage(300, DefList.Energy);
+            collision.GetComponentInParent<CharacterParent>().Check = false;
+            transform.gameObject.SetActive(false);
         }
         if (collision.tag == "Bullet")
         {

@@ -4,10 +4,20 @@ using UnityEngine;
 
 public class LinePlayer : MonoBehaviour
 {
+    Dir dir;
 
     private void OnEnable()
     {
-        transform.position = GameObject.Find("Pos").transform.position;
+        if (GameObject.Find("Player").transform.GetChild(0).GetComponent<SpriteRenderer>().flipX)
+        {
+            dir = Dir.Left;
+            transform.position = GameObject.Find("Player").transform.GetChild(0).transform.position - transform.right;
+        }
+        else
+        {
+            dir = Dir.Right;
+            transform.position = GameObject.Find("Player").transform.GetChild(0).transform.position + transform.right;    
+        }
     }
     // Start is called before the first frame update
     void Start()
@@ -17,7 +27,18 @@ public class LinePlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(new Vector2(1.5f, 0));
+        switch (dir)
+        {
+            case Dir.Right:
+                transform.Translate(new Vector2(1.5f, 0));
+                break;
+            case Dir.Left:
+                transform.Translate(new Vector2(-1.5f, 0));
+                break;
+
+        }
+
+        
     }
 
     public static void Laser()

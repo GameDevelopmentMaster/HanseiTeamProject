@@ -48,11 +48,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64a60ae4e96fae546bea5d0f68341727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Character: 1
+  dir: 0
   PlayerTransform: {x: 0, y: 0, z: 0}
   Dir: {x: 0, y: 0, z: 0}
   Speed: 0
-  BoomAnimation: {fileID: 0}
+  BoomAnimation: {fileID: 2027487924814656031}
 --- !u!58 &2182493901091105391
 CircleCollider2D:
   m_ObjectHideFlags: 0

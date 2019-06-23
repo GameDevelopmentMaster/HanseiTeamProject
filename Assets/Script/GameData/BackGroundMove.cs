@@ -16,38 +16,95 @@ public class BackGroundMove : MonoBehaviour
     void Update()
     {
 
-        for (int i = 0; i < 6; i+=3)
+       
+        
+    }
+
+    public void RightMove()
+    {
+        for (int i = 0; i < 6; i += 3)
         {
-            BackGround[i].transform.localPosition = new Vector3(BackGround[i].transform.localPosition.x - Time.deltaTime * (Spped+30), BackGround[i].transform.localPosition.y,1f);
-            BackGround[i + 1].transform.localPosition = new Vector3(BackGround[i+1].transform.localPosition.x - Time.deltaTime * (Spped+10), BackGround[i+1].transform.localPosition.y,0.5f);
-            BackGround[i + 2].transform.localPosition = new Vector3(BackGround[i+2].transform.localPosition.x - Time.deltaTime * Spped, BackGround[i+2].transform.localPosition.y,0.3f);
+            BackGround[i].transform.localPosition = new Vector3(BackGround[i].transform.localPosition.x - Time.deltaTime * (Spped + 30), BackGround[i].transform.localPosition.y, 1f);
+            BackGround[i + 1].transform.localPosition = new Vector3(BackGround[i + 1].transform.localPosition.x - Time.deltaTime * (Spped + 10), BackGround[i + 1].transform.localPosition.y, 0.5f);
+            BackGround[i + 2].transform.localPosition = new Vector3(BackGround[i + 2].transform.localPosition.x - Time.deltaTime * Spped, BackGround[i + 2].transform.localPosition.y, 0.3f);
         }
-        for (int i=0; i<6; i++)
+        for (int i = 0; i < 6; i++)
         {
             if (BackGround[i].transform.localPosition.x < -17.77f)
             {
-                switch (i) {
+                switch (i)
+                {
                     case 0:
-                        BackGround[i].transform.localPosition = new Vector3(BackGround[3].transform.position.x+17.74f, 0, 1f);
-                        break;
                     case 3:
-                        BackGround[i].transform.localPosition = new Vector3(BackGround[0].transform.position.x+17.74f, 0,1f);
+                        SetRightBackGround(i, 1);
                         break;
                     case 1:
-                        BackGround[i].transform.localPosition = new Vector3(BackGround[4].transform.position.x +17.74f, 0, 0.5f);
-                        break;
                     case 4:
-                        BackGround[i].transform.localPosition = new Vector3(BackGround[1].transform.position.x + 17.74f, 0,0.5f);
+                        SetRightBackGround(i, 0.5f);
                         break;
                     case 2:
-                        BackGround[i].transform.localPosition = new Vector3(BackGround[5].transform.position.x + 17.74f, 0,0.3f);
-                        break;
                     case 5:
-                        BackGround[i].transform.localPosition = new Vector3(BackGround[2].transform.position.x + 17.74f, 0,0.3f);
+                        SetRightBackGround(i, 0.3f);
                         break;
                 }
-                
+
             }
+        }
+
+    }
+
+    public void LeftMove()
+    {
+        for (int i = 0; i < 6; i += 3)
+        {
+            BackGround[i].transform.localPosition = new Vector3(BackGround[i].transform.localPosition.x - Time.deltaTime * (Spped - 30), BackGround[i].transform.localPosition.y, 1f);
+            BackGround[i + 1].transform.localPosition = new Vector3(BackGround[i + 1].transform.localPosition.x - Time.deltaTime * (Spped - 10), BackGround[i + 1].transform.localPosition.y, 0.5f);
+            BackGround[i + 2].transform.localPosition = new Vector3(BackGround[i + 2].transform.localPosition.x - Time.deltaTime * Spped, BackGround[i + 2].transform.localPosition.y, 0.3f);
+        }
+        for (int i = 0; i < 6; i++)
+        {
+            if (BackGround[i].transform.localPosition.x > 17.66f)
+            {
+                switch (i)
+                {
+                    case 0:
+                    case 3:
+                        SetLeftBackGround(i, 1);
+                        break;
+                    case 1:
+                    case 4:
+                        SetLeftBackGround(i, 0.5f);
+                        break;
+                    case 2:
+                    case 5:
+                        SetLeftBackGround(i, 0.3f);
+                        break;
+                }
+
+            }
+        }
+    }
+
+    void SetRightBackGround(int Value, float PosZ)
+    {
+        if(Value + 3 <= 5)
+        {
+            BackGround[Value].transform.localPosition = new Vector3(BackGround[Value + 3].transform.localPosition.x + 17.74f, BackGround[Value].transform.localPosition.y, PosZ);
+        }
+        else
+        {
+            BackGround[Value].transform.localPosition = new Vector3(BackGround[Value - 3].transform.localPosition.x + 17.74f, BackGround[Value].transform.localPosition.y, PosZ);
+        }
+    }
+    void SetLeftBackGround(int Value, float PosZ)
+    {
+        if (Value + 3 <= 5)
+        {
+            BackGround[Value].transform.localPosition = new Vector3(BackGround[Value + 3].transform.localPosition.x - 17.66f, BackGround[Value].transform.localPosition.y, PosZ);
+        }
+        else
+        {
+            BackGround[Value].transform.localPosition = new Vector3(BackGround[Value - 3].transform.localPosition.x - 17.66f, BackGround[Value].transform.localPosition.y, PosZ);
         }
     }
 }

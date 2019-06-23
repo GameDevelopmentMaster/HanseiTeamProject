@@ -4,43 +4,51 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-   public enum CharacterList { PlayerCharacter, EnemyCharacter };
 
-    public CharacterList Character;
+   public  Dir dir;
+    //public CharacterList Character;
     public Vector3 PlayerTransform;
     public Vector3 Dir;
     public float Speed;
     public ParticleSystem BoomAnimation;
-    bool Check=false;
+    bool Check = false;
+    float Damage;
 
-    private void OnDisable()
+    private void OnEnable()
     {
+        Damage = transform.parent.GetComponent<CharacterParent>().GetGameData().Damage;
+        if (transform.parent.GetChild(0).tag == "Bullet" || GameObject.FindWithTag("Player") == null)
+        {
+            Check = true;
+        }
+        else if (GameObject.FindWithTag("Player") != null)
+        {
+            PlayerTransform = GameObject.FindWithTag("Player").transform.position;
+            Dir = Vector3.Normalize(PlayerTransform - this.transform.position);
+        }
+        Speed = 3f;
 
-        Debug.Log(this.gameObject.name);
-        //if(Character == CharacterList.EnemyCharacter)
-        //{
-        //   // BoomAnimation.Play();
-        //}
+        if (transform.parent.GetChild(0).GetComponent<SpriteRenderer>().flipX == true)
+        {
+            dir = global::Dir.Left;
+            transform.position -= transform.right;
+        }
+        else
+        {
+            dir = global::Dir.Right;
+            transform.position += transform.right;
+        }
+
+    }
+    private void Awake()
+    {
         
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        if (transform.parent.GetChild(0).tag == "Bullet")
-        {
-            Check = true;
-        }
-        Speed = 5f;
-        if (GameObject.FindWithTag("Player") != null)
-        {
-            PlayerTransform = GameObject.FindWithTag("Player").transform.position;
-        }
-        else
-        {
-            PlayerTransform = new Vector2(-100,0);
-            return;
-        }       
+        
     }
 
     // Update is called once per frame
@@ -50,58 +58,67 @@ public class Bullet : MonoBehaviour
         {
             return;
         }
-        if (PlayerTransform.x != -100)
+
+        switch (transform.parent.GetChild(0).name)
         {
-            Dir = Vector3.Normalize(PlayerTransform - this.transform.position);
-            switch (Character)
-            {
-                case CharacterList.PlayerCharacter:
-                    this.gameObject.transform.position += this.transform.right * Time.deltaTime * Speed;
-                    break;
-                case CharacterList.EnemyCharacter:
+            case "PlayerImage":
+                Speed = 7f;
+                if(dir == global::Dir.Right)
+                this.gameObject.transform.position += this.transform.right * Time.deltaTime * Speed;
+                if(dir == global::Dir.Left)
+                    this.gameObject.transform.position += -this.transform.right * Time.deltaTime * Speed;
+                break;
+            case "EnemyImage":
+                if(dir == global::Dir.Stop)
+                {
+                    transform.position -= transform.up;
+                }
+                else
+                {
                     this.gameObject.transform.position += new Vector3(Dir.x * Time.deltaTime * Speed, Dir.y * Time.deltaTime * Speed);
-                    break;
-            }
+                }
+                
+                break;
         }
-        else
-        {
-            this.transform.position -= this.transform.up*Time.deltaTime * Speed;
-        }
-        if (this.gameObject.transform.position.x > 11f || this.gameObject.transform.position.y > 6.0f || this.gameObject.transform.position.x < -7f || this.transform.position.y < -3.5f)
-        {
-            this.gameObject.SetActive(false);
-        }
+        //else
+        //{
+        //    this.transform.position -= this.transform.up * Time.deltaTime * Speed;
+        //}
+        
     }
 
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "Player" && Character == CharacterList.EnemyCharacter)
+        if (collision.tag == "Ground")
         {
-            this.gameObject.SetActive(false);
-            Destroy(collision.gameObject);
+            gameObject.SetActive(false);
         }
-        if(collision.tag == "Enemy"&&Character == CharacterList.PlayerCharacter)
+        if (collision.transform.GetComponentsInParent<CharacterParent>() != null)
         {
-            this.gameObject.SetActive(false);
-            Destroy(collision.gameObject);
-        }
-        if (collision.GetComponent<Bullet>() == null)
-        {
-            return;
-        }
-        else if(collision.tag == "Bullet" && collision.GetComponent<Bullet>().Character != Character)
-        {  
-            if(this.transform.childCount != 0)
-            {
-                this.transform.GetChild(0).gameObject.SetActive(false);
-            }
-            else
+            if (collision.transform.parent.GetComponent<CharacterParent>() != null && transform.parent.GetChild(0).tag != collision.transform.parent.GetChild(0).tag)
             {
                 this.gameObject.SetActive(false);
-            }   
+                collision.transform.parent.GetComponent<CharacterParent>().Damage(Damage, DefList.Physics);
+            }
         }
-       
+        if(collision.tag == "MainCamera")
+        {
+            Debug.Log(transform.position);
+        }
+         if (collision.tag == "Bullet" && collision.transform.parent.GetChild(0).tag != transform.parent.GetChild(0).tag)
+        {
+            collision.gameObject.SetActive(false);
+            this.gameObject.SetActive(false);
+        }
+        
     }
 
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.tag == "MainCamera")
+        {
+            gameObject.SetActive(false);
+        }
+    }
 }

@@ -60,18 +60,33 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Script\Enemy\EnemyController.cs" />
-    <Compile Include="Assets\Script\Enemy\EnemyParent.cs" />
+    <Compile Include="Assets\Script\Boss\BossBullet.cs" />
+    <Compile Include="Assets\Script\Boss\BossSKill.cs" />
+    <Compile Include="Assets\Script\Enemy\AirEnemy.cs" />
+    <Compile Include="Assets\Script\Enemy\BoomBullet.cs" />
+    <Compile Include="Assets\Script\Enemy\CheckPos.cs" />
+    <Compile Include="Assets\Script\Enemy\EnemyHP.cs" />
+    <Compile Include="Assets\Script\Enemy\GroundEnemy.cs" />
+    <Compile Include="Assets\Script\Enemy\Mine.cs" />
+    <Compile Include="Assets\Script\Enemy\RunEnemy.cs" />
     <Compile Include="Assets\Script\GameData\BackGroundMove.cs" />
-    <Compile Include="Assets\Script\GameData\EnemyManager.cs" />
-    <Compile Include="Assets\Script\GameData\Item.cs" />
+    <Compile Include="Assets\Script\GameData\CameraMove.cs" />
+    <Compile Include="Assets\Script\GameData\CharacterParent.cs" />
+    <Compile Include="Assets\Script\GameData\Data.cs" />
+    <Compile Include="Assets\Script\GameData\DownGround.cs" />
+    <Compile Include="Assets\Script\GameData\StageCheck.cs" />
+    <Compile Include="Assets\Script\GameData\StageManager.cs" />
+    <Compile Include="Assets\Script\GameData\UIManager.cs" />
     <Compile Include="Assets\Script\Player\Bullet.cs" />
-    <Compile Include="Assets\Script\Player\CamaraShake.cs" />
+    <Compile Include="Assets\Script\Player\CameraShake.cs" />
     <Compile Include="Assets\Script\Player\CircleBullet.cs" />
     <Compile Include="Assets\Script\Player\HomingMissile.cs" />
     <Compile Include="Assets\Script\Player\LinePlayer.cs" />
     <Compile Include="Assets\Script\Player\Nulclaer.cs" />
     <Compile Include="Assets\Script\Player\Player.cs" />
+    <Compile Include="Assets\Script\Player\PlayerBust.cs" />
+    <Compile Include="Assets\Script\Player\PlayerImage.cs" />
+    <Compile Include="Assets\Script\Player\PlayerSkil.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/ky111/바탕화면/프로젝트/대회 프로젝트/HanseiShootingGame/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
