@@ -27,15 +27,8 @@ public class Player : MonoBehaviour
     public int JumpCount;
     bool EneryBoom = false;
     int BulletCount = 50;
-    // Start is called before the first frame update
-    void Start()
-    {
-        BulletTiming = 0;
-        Speed = transform.parent.GetComponent<CharacterParent>().GetGameData().Speed;
-        JumpCount = 1;
-    }
 
-    private void FixedUpdate()
+    private void Awake()
     {
         skil = transform.parent.GetComponent<PlayerSkil>();
         camaraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
@@ -44,6 +37,15 @@ public class Player : MonoBehaviour
         HomingMissileCount = 3;
         groundMove = GameObject.Find("GroundManager").GetComponent<BackGroundMove>();
     }
+    // Start is called before the first frame update
+    void Start()
+    {
+        BulletTiming = 0;
+        Speed = transform.parent.GetComponent<CharacterParent>().GetGameData().Speed;
+        JumpCount = 1;
+    }
+
+   
     // Update is called once per frame
     void Update()
     {
@@ -65,6 +67,7 @@ public class Player : MonoBehaviour
                         }
                     }
                     Gun.Play();
+                    Debug.Log("Play");
                     BulletTiming = 0;
                     BulletCount--;
                     playerImage.BulletText(BulletCount.ToString());
@@ -217,12 +220,14 @@ public class Player : MonoBehaviour
     }
     private void OnDestroy()
     {
+        FindObjectOfType<StageManager>().GameOver();
         if (transform.parent.GetChild(1).tag != "Player")
         {
             Destroy(transform.parent.gameObject);
         }
         else
         {
+            
             transform.parent.GetChild(1).gameObject.SetActive(true);
         }
     }
@@ -281,6 +286,8 @@ public class Player : MonoBehaviour
         }
 
     }
+
+    
   
 
    

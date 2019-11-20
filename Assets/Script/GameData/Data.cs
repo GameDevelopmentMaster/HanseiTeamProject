@@ -2,11 +2,188 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 #region Data
+public enum Dir { Left, Right, Stop };
+
+public enum CharacterList { PlayerCharacter, StopCharacter, GroundCharacter, AirCharacter, PotopCharacter, RunCharacter, Boss };
+
+public enum DefList { Physics, Energy, };
+
+public enum BossSkil { LeftDirBullet, DownDirBullet, CrossDirBullet };
+
+public struct CharacterData
+{
+    public float[] FDefense;     // 0: 물리 1 : 에너지
+    public float Hp;
+    public float Speed;
+    public float Damage;
+    public float AtkSpeed;
+    public float SkilSpeed;
+    public float SkilDamage;
+
+};
+#endregion
+
+
+#region Character
+
+public interface Character
+{
+        
+    void CharacterInit(ref CharacterData Data);
+}
+
+ class AirCharacter : Character 
+{
+    int characterCode;
+    public AirCharacter(int code)
+    {
+        characterCode = code;
+    }
+
+    public void CharacterInit(ref CharacterData character)
+    {
+        if(characterCode == 3)
+        {
+            character.Hp = 450;
+            character.Damage = 5;
+            character.SkilDamage = 100;
+            character.FDefense[0] = 2;
+            character.FDefense[1] = 4;
+            character.Speed = 13 * 0.5f;
+            character.AtkSpeed = 1 / 2f;
+
+        }
+        else if(characterCode == 6)
+        {
+            character.Hp = 550;
+            character.Damage = 5.5f;
+            character.SkilDamage = 175;
+            character.FDefense[0] = 3;
+            character.FDefense[1] = 6;
+            character.Speed = 14 * 0.5f;
+            character.AtkSpeed = 1 / 2f;
+        }
+        else if(characterCode == 10)
+        {
+            character.Hp = 700;
+            character.Damage = 15;
+            character.FDefense[0] = 2;
+            character.FDefense[1] = 7;
+            character.Speed = 15 * 0.5f;
+            character.AtkSpeed = 1 / 2f;
+        }
+        
+    }
+
+    
+}
+
+class GroundCharacter : Character
+{
+    int characterCode;
+   public GroundCharacter(int code)
+    {
+        characterCode = code;
+    }
+    public void CharacterInit(ref CharacterData character)
+    {
+        if (characterCode == 1)
+        {
+            character.Hp = 750;
+            character.SkilDamage = 150;
+            character.FDefense[0] = 4;
+            character.FDefense[1] = 5;
+            character.Speed = 7 / 0.5f;
+            character.AtkSpeed = 1 / 3f;
+        }
+        else if (characterCode == 4)
+        {
+            character.Hp = 950;
+            character.SkilDamage = 225;
+            character.FDefense[0] = 5;
+            character.FDefense[1] = 6;
+            character.Speed = 8 * 0.5f;
+            character.AtkSpeed = 1 / 3f;
+        }
+    }
+}
+
+class StopCharacter : Character
+{
+    int characterCode;
+    
+    public StopCharacter(int code)
+    {
+        characterCode = code;
+    }
+
+    public void CharacterInit(ref CharacterData character)
+    {
+        if (characterCode == 2)
+        {
+            character.Hp = 200;
+            character.SkilDamage = 350;
+            character.FDefense[0] = 2;
+            character.FDefense[1] = 0;
+        }
+        else if (characterCode == 5)
+        {
+            character.Hp = 250;
+            character.SkilDamage = 350;
+            character.FDefense[0] = 3;
+            character.FDefense[1] = 0;
+        }
+        else if (characterCode == 9)
+        {
+            character.Hp = 300;
+            character.SkilDamage = 550;
+            character.FDefense[0] = 3;
+            character.FDefense[1] = 0;
+        }
+    }
+}
+
+class PotopCharacter : Character
+{
+    public PotopCharacter(ref CharacterData data)
+    {
+        CharacterInit(ref data);
+    }
+    public void CharacterInit(ref CharacterData character)
+    {
+        character.Hp = 1000;
+        character.SkilDamage = 135;
+        character.AtkSpeed = 0.3f / 3f;
+        character.FDefense[0] = 6;
+        character.FDefense[1] = 5;
+    }
+}
+
+class RunCharacter : Character
+{
+    public RunCharacter(ref CharacterData data)
+    {
+        CharacterInit(ref data);
+    }
+    public void CharacterInit(ref CharacterData character)
+    {
+        character.Hp = 300;
+        character.SkilDamage = 300;
+        character.FDefense[0] = 10;
+        character.FDefense[1] = 10;
+        character.Speed = 10 * 0.5f;
+    }
+
+}
+#endregion
+
+
 public class Data : MonoBehaviour
 {
     private float MaxHp;
-    protected ChacterData GameData;
+    protected CharacterData GameData;
     bool Shield;
     bool Check = false;
     float ShieldTime;
@@ -68,92 +245,22 @@ public class Data : MonoBehaviour
         switch (character)
         {
             case CharacterList.AirCharacter:
-                if (Code == 3)
-                {
-                    MaxHp = GameData.Hp = 450;
-                    GameData.Damage = 5;
-                    GameData.SkilDamage = 100;
-                    GameData.FDefense[0] = 2;
-                    GameData.FDefense[1] = 4;
-                    GameData.Speed = 13 * 0.5f;
-                    GameData.AtkSpeed = 1 / 2f;
-                }
-                else if (Code == 6)
-                {
-                    MaxHp = GameData.Hp = 550;
-                    GameData.Damage = 5.5f;
-                    GameData.SkilDamage = 175;
-                    GameData.FDefense[0] = 3;
-                    GameData.FDefense[1] = 6;
-                    GameData.Speed = 14 * 0.5f;
-                    GameData.AtkSpeed = 1 / 2f;
-                }
-                else if (Code == 10)
-                {
-                    MaxHp = GameData.Hp = 700;
-                    GameData.Damage = 15;
-                    GameData.FDefense[0] = 2;
-                    GameData.FDefense[1] = 7;
-                    GameData.Speed = 15 * 0.5f;
-                    GameData.AtkSpeed = 1 /2f;
-                }
+                AirCharacter air = new AirCharacter(Code);
+                air.CharacterInit(ref GameData);
                 break;
             case CharacterList.GroundCharacter:
-                if (Code == 1)
-                {
-                    MaxHp = GameData.Hp = 750;
-                    GameData.SkilDamage = 150;
-                    GameData.FDefense[0] = 4;
-                    GameData.FDefense[1] = 5;
-                    GameData.Speed = 7 / 0.5f;
-                    GameData.AtkSpeed = 1 / 3f;
-                }
-                else if (Code == 4)
-                {
-                    MaxHp = GameData.Hp = 950;
-                    GameData.SkilDamage = 225;
-                    GameData.FDefense[0] = 5;
-                    GameData.FDefense[1] = 6;
-                    GameData.Speed = 8 * 0.5f;
-                    GameData.AtkSpeed = 1 / 3f;
-                }
+                GroundCharacter ground = new GroundCharacter(Code);
+                ground.CharacterInit(ref GameData);
                 break;
             case CharacterList.StopCharacter:
-                if (Code == 2)
-                {
-                    MaxHp = GameData.Hp = 200;
-                    GameData.SkilDamage = 350;
-                    GameData.FDefense[0] = 2;
-                    GameData.FDefense[1] = 0;
-                }
-                else if (Code == 5)
-                {
-                    MaxHp = GameData.Hp = 250;
-                    GameData.SkilDamage = 350;
-                    GameData.FDefense[0] = 3;
-                    GameData.FDefense[1] = 0;
-                }
-                else if (Code == 9)
-                {
-                    MaxHp = GameData.Hp = 300;
-                    GameData.SkilDamage = 550;
-                    GameData.FDefense[0] = 3;
-                    GameData.FDefense[1] = 0;
-                }
+                StopCharacter stop = new StopCharacter(Code);
+                stop.CharacterInit(ref GameData);
                 break;
             case CharacterList.PotopCharacter:
-                MaxHp = GameData.Hp = 1000;
-                GameData.SkilDamage = 135;
-                GameData.AtkSpeed = 0.3f / 3f;
-                GameData.FDefense[0] = 6;
-                GameData.FDefense[1] = 5;
+                PotopCharacter potop = new PotopCharacter(ref GameData); 
                 break;
             case CharacterList.RunCharacter:
-                MaxHp = GameData.Hp = 700;
-                GameData.SkilDamage = 300;
-                GameData.FDefense[0] = 10;
-                GameData.FDefense[1] = 10;
-                GameData.Speed = 10 * 0.5f;
+                RunCharacter run = new RunCharacter(ref GameData);
                 break;
             case CharacterList.PlayerCharacter:
                 if(Check)
@@ -175,10 +282,11 @@ public class Data : MonoBehaviour
                 GameData.FDefense[1] = 15;
                 break;
         }
+        MaxHp = GameData.Hp;
 
     }
 
-    public void SetGameData(ChacterData Data)
+    public void SetGameData(CharacterData Data)
     {
         GameData = Data;
     }
@@ -188,7 +296,7 @@ public class Data : MonoBehaviour
         Shield = Value;
     }
 
-    public ChacterData GetGameData()
+    public CharacterData GetGameData()
     {
         return GameData;
     }
@@ -222,23 +330,5 @@ public class Data : MonoBehaviour
         }
     }
 }
-public enum Dir { Left, Right, Stop };
 
-public enum CharacterList { PlayerCharacter, StopCharacter, GroundCharacter, AirCharacter, PotopCharacter, RunCharacter, Boss };
 
-public enum DefList { Physics, Energy, };
-
-public enum BossSkil {LeftDirBullet,DownDirBullet,  CrossDirBullet };
-
-public struct ChacterData
-{
-    public float[] FDefense;     // 0: 물리 1 : 에너지
-    public float Hp;
-    public float Speed;
-    public float Damage;
-    public float AtkSpeed;
-    public float SkilSpeed;
-    public float SkilDamage;
-
-};
-#endregion

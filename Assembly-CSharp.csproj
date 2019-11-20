@@ -71,14 +71,14 @@
     <Compile Include="Assets\Script\Enemy\RunEnemy.cs" />
     <Compile Include="Assets\Script\GameData\BackGroundMove.cs" />
     <Compile Include="Assets\Script\GameData\CameraMove.cs" />
+    <Compile Include="Assets\Script\GameData\CameraShake.cs" />
     <Compile Include="Assets\Script\GameData\CharacterParent.cs" />
     <Compile Include="Assets\Script\GameData\Data.cs" />
     <Compile Include="Assets\Script\GameData\DownGround.cs" />
     <Compile Include="Assets\Script\GameData\StageCheck.cs" />
-    <Compile Include="Assets\Script\GameData\StageManager.cs" />
     <Compile Include="Assets\Script\GameData\UIManager.cs" />
+    <Compile Include="Assets\Script\Manager\StageManager.cs" />
     <Compile Include="Assets\Script\Player\Bullet.cs" />
-    <Compile Include="Assets\Script\Player\CameraShake.cs" />
     <Compile Include="Assets\Script\Player\CircleBullet.cs" />
     <Compile Include="Assets\Script\Player\HomingMissile.cs" />
     <Compile Include="Assets\Script\Player\LinePlayer.cs" />

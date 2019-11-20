@@ -7,15 +7,14 @@ public class BossSKill : MonoBehaviour
     public AudioSource nas;
     public AudioSource ang;
     GameObject Enemy10;
-    float SkilCoolTiming;
-    float StartTiming;
+    float SkilCoolTiming =5f;
+    float StartTiming = 0;
     int PreSkil;
     bool Check;
     int NowSkil;
     // Start is called before the first frame update
     void Start()
     {
-        SkilCoolTiming = 3f;
         PreSkil = Random.Range(1, 4);
         switch (PreSkil)
         {
@@ -35,43 +34,9 @@ public class BossSKill : MonoBehaviour
                 Respen();
                 break;
         }
+        StartCoroutine(StartSkil());
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-       
-        if(StartTiming> SkilCoolTiming)
-        {  NowSkil = Random.Range(1,4);
-            while (PreSkil == NowSkil)
-            {
-                NowSkil = Random.Range(1, 6);
-            }
-
-            switch (NowSkil)
-            {
-                case 1:
-                    transform.GetComponent<CharacterParent>().SetShield(true);
-                    StartCoroutine(BossShieldStart());
-                    break;
-                case 2:
-                case 3:
-                case 4:
-                    StartCoroutine(LeftHand());
-                    break;
-                case 5:
-                    StartCoroutine(RightHand());
-                    break;
-                case 6:
-                    Respen();
-                    break;
-            }
-            PreSkil = NowSkil;
-            StartTiming = 0;
-        }
-        StartTiming += 1 * Time.deltaTime;
-    }
-
+    
    public void Respen()
     {
         for(int i=0; i<4; i++)
@@ -80,6 +45,45 @@ public class BossSKill : MonoBehaviour
         }
     }
 
+    IEnumerator StartSkil()
+    {
+        while (true)
+        {
+            if (StartTiming > SkilCoolTiming)
+            {
+                NowSkil = Random.Range(1,5);
+                while (PreSkil == NowSkil)
+                {
+                    NowSkil = Random.Range(1, 5);
+                }
+
+                switch (NowSkil)
+                {
+                    case 1:
+                        transform.GetComponent<CharacterParent>().SetShield(true);
+                        yield return StartCoroutine(BossShieldStart());
+                        break;
+                    case 2:
+                    case 3:
+                    case 4:
+                        yield return StartCoroutine(LeftHand());
+                        break;
+                    case 5:
+                        yield return StartCoroutine(RightHand());
+                        break;
+                    case 6:
+                        Respen();
+                        break;
+                }
+                PreSkil = NowSkil;
+                StartTiming = 0;
+            }
+            StartTiming += Time.deltaTime;
+            yield return null;  
+        }
+    }
+
+    #region Skil List
     IEnumerator BossShieldStart()
     {
         SpriteRenderer BossSprite = transform.GetChild(2).GetComponent<SpriteRenderer>();
@@ -102,6 +106,8 @@ public class BossSKill : MonoBehaviour
         }
     }
 
+
+
     IEnumerator CrossSkil()
     {
         for(int i=3; i<transform.childCount-1; i++)
@@ -116,35 +122,42 @@ public class BossSKill : MonoBehaviour
     }
     IEnumerator RightHand()
     {
-        for(int i=0; i<50; i++)
+        float timer = 0;
+        Vector3 up = new Vector3(transform.GetChild(0).position.x, transform.position.y);
+        Vector3 down = transform.GetChild(0).position;
+        while (timer < 1)
         {
-            transform.GetChild(1).position += transform.up * Time.deltaTime * 10;
+            transform.GetChild(0).position = Vector3.Lerp(down, up, timer);
+            timer += Time.deltaTime;
             yield return null;
         }
-      
-        for (int i = 0; i < 50; i++)
+        while (timer > 0)
         {
-            transform.GetChild(1).position -= transform.up * Time.deltaTime * 10;
+            transform.GetChild(0).position = Vector3.Lerp(down, up, timer);
+            timer -= Time.deltaTime;
             yield return null;
         }
-        yield return new WaitForSeconds(2f);
         GameObject.Find("Main Camera").GetComponent<CameraShake>().ShakeStart = true;
         transform.GetComponent<BoxCollider2D>();
         nas.Play();
     }
     IEnumerator LeftHand()
     {
-        for(int i=0; i<50; i++)
+        float timer =0;
+        Vector3 up = new Vector3(transform.GetChild(0).position.x, transform.position.y);
+        Vector3 down = transform.GetChild(0).position;
+        while (timer < 1)
         {
-            transform.GetChild(0).position += transform.up * Time.deltaTime * 10;
+            transform.GetChild(0).position = Vector3.Lerp(down, up, timer);
+            timer += Time.deltaTime;
             yield return null;
         }
-        for(int i=0; i<50; i++)
+        while ( timer > 0)
         {
-            transform.GetChild(0).position -= transform.up * Time.deltaTime * 10;
+            transform.GetChild(0).position = Vector3.Lerp(down, up, timer);
+            timer -= Time.deltaTime;
             yield return null;
         }
-        yield return new WaitForSeconds(1f);
         switch (NowSkil)
         {
             case 2:
@@ -172,6 +185,8 @@ public class BossSKill : MonoBehaviour
                 StartCoroutine(CrossSkil());
                 break;
         }
-        ang.Play();
+        //ang.Play();
     }
+    #endregion
+
 }

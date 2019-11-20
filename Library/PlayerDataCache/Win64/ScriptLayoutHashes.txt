@@ -1,6 +1,6 @@
 Win64
 PlayerPath?
-C:/Users/ky111/바탕화면/4조/HanseiShootingGame.exe
+C:/Users/ky111/바탕화면/HanseiShooting/HanseiShootingGame.exe
 SceneListBegin?
 Assets/Scenes/MainScene.unity
 Assets/Scenes/Stage1.unity
@@ -123,6 +123,7 @@ d251bf88db6c95a6b1aa0b69298da9ef UnityEngine.SpatialTracking.dll:UnityEngine.Spa
 648b07bbd541802cc82ed008f1847d71 Assembly-CSharp.dll:.CameraShake
 303ad70ce203ad874efe2965d0fbcff9 Unity.Analytics.Tracker.dll:UnityEngine.Analytics.AnalyticsEventTracker
 7fb9de8dcf73854b6b328eca1f7a6e6d Unity.Analytics.Tracker.dll:UnityEngine.Analytics.AnalyticsTracker
+6aee0e1b5c3654a8fb4fb56ff2e49e98 Assembly-CSharp.dll:.DownGround
 97a39d1c08429471697e357734281f04 Assembly-CSharp.dll:.Bullet
 94017dcc9f00fe671ea7dc427b4da011 Unity.TextMeshPro.dll:TMPro.TMP_SpriteAsset
 71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:.GroundEnemy
@@ -169,7 +170,7 @@ fb6a1ea36b4f6ef5948d283d93760765 UnityEngine.GoogleAudioSpatializer.dll:UnityEng
 5b0391b7e3d9ea9db6c0a8fbd0ca23f6 UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioSoundfieldExtension
 5b0391b7e3d9ea9db6c0a8fbd0ca23f6 UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioSourceExtension
 a4f0a4f62100f1a4fb5cbe0e00dde83f Unity.TextMeshPro.dll:TMPro.TextMeshProUGUI
-71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:.BossSKill
+f07f29944f1c0d67ee13396c92832afa Assembly-CSharp.dll:.BossSKill
 5fc094978ce3e3591a7500ed380d854a Unity.Analytics.DataPrivacy.dll:UnityEngine.Analytics.DataPrivacyButton
 d251bf88db6c95a6b1aa0b69298da9ef UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 ff7ff337c5b6fe8d09b5ed9dfeb2c35d Assembly-CSharp.dll:.Player
@@ -177,6 +178,7 @@ ff7ff337c5b6fe8d09b5ed9dfeb2c35d Assembly-CSharp.dll:.Player
 71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:.BoomBullet
 d791aa6007fa3640be1164ea75bb087d Unity.TextMeshPro.dll:TMPro.TMP_StyleSheet
 0da4181020db24c0144ae915d85e214c Assembly-CSharp.dll:.PlayerSkil
+71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:.EnemyHP
 edcd55d11a44b5b75eda639c493321b6 Assembly-CSharp.dll:.CircleBullet
 c18bd38ad460f441bd47db110c1e0029 Assembly-CSharp.dll:.Nulclaer
 c6666661329916e218bee7f5e79e60f5 Unity.TextMeshPro.dll:TMPro.TextMeshPro
@@ -185,5 +187,3 @@ c6666661329916e218bee7f5e79e60f5 Unity.TextMeshPro.dll:TMPro.TextMeshPro
 591148bc854c5b79f2c56cc34338720a Assembly-CSharp.dll:.StageCheck
 da27350bef382c2cd6bf366bb27842fc Assembly-CSharp.dll:.Mine
 b0737f358318ebd16f06b7f8ffb859eb Assembly-CSharp.dll:.RunEnemy
-6aee0e1b5c3654a8fb4fb56ff2e49e98 Assembly-CSharp.dll:.DownGround
-71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:.EnemyHP

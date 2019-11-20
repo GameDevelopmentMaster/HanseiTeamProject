@@ -9,7 +9,7 @@ public class PlayerBust : MonoBehaviour
     float CoolTime;
     [SerializeField]
     float PlayerSpeed;
-    ChacterData chacterData;
+    CharacterData chacterData;
     float CheckData;
     private void OnEnable()
     {

@@ -16,6 +16,21 @@ public class StageCheck : MonoBehaviour
     {
         
     }
+
+
+    public void Restart()
+    {
+        manager.Restart();
+    }
+
+    public void GameEnd()
+    {
+        manager.GameOverButton();
+    }
+    public void Quit()
+    {
+        Application.Quit();
+    }
     public void SetStatsName(string NameValue)
     {
         manager.SetStatsName(NameValue);

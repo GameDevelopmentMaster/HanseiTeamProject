@@ -90,9 +90,14 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.tag == "MainCamera")
+        {
+            return;
+        }
         if (collision.tag == "Ground")
         {
             gameObject.SetActive(false);
+            return;
         }
         if (collision.transform.GetComponentsInParent<CharacterParent>() != null)
         {
@@ -102,10 +107,7 @@ public class Bullet : MonoBehaviour
                 collision.transform.parent.GetComponent<CharacterParent>().Damage(Damage, DefList.Physics);
             }
         }
-        if(collision.tag == "MainCamera")
-        {
-            Debug.Log(transform.position);
-        }
+        
          if (collision.tag == "Bullet" && collision.transform.parent.GetChild(0).tag != transform.parent.GetChild(0).tag)
         {
             collision.gameObject.SetActive(false);

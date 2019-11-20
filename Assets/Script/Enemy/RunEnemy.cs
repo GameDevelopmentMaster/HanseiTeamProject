@@ -31,9 +31,8 @@ public class RunEnemy : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            Debug.Log("데미지 체크");
-            collision.transform.parent.GetComponent<CharacterParent>().Damage(transform.parent.GetComponent<CharacterParent>().GetGameData().Damage, DefList.Physics);
-            transform.parent.GetComponent<CharacterParent>().Damage(transform.GetComponentInParent<CharacterParent>().GetGameData().Damage, DefList.Physics);
+            collision.transform.parent.GetComponent<CharacterParent>().Damage(transform.parent.GetComponent<CharacterParent>().GetGameData().SkilDamage, DefList.Physics);
+            transform.parent.GetComponent<CharacterParent>().Damage(transform.GetComponentInParent<CharacterParent>().GetGameData().SkilDamage, DefList.Physics);
         }
     }
 }

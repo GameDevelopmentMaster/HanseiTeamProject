@@ -2,46 +2,58 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 public class UIManager : MonoBehaviour
 {
-    GameObject UI;
+    [SerializeField]
+   protected Canvas UI;
     string Name;
-    Camera MainCamera;
+    [SerializeField]
+   protected Camera MainCamera;
+
+
     // Start is called before the first frame update
-   
-   virtual public void Update()
+
+    private void Awake()
     {
-        UI = GameObject.Find("Canvas");
         MainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        SceneLoadData();
+    }
+
+    
+
+    public void SceneLoadData()
+    {
+        UI = GameObject.Find("Canvas").GetComponent<Canvas>();
         if(MainCamera != null)
         {
-            UI.GetComponent<Canvas>().worldCamera = MainCamera;
+            UI.worldCamera = MainCamera;
         }
     }
 
-    public void SetStage(string StageValue)
-    {
-        if(SceneName() != "BossScene")
-        {
-            UI.transform.GetChild(4).GetComponent<Text>().text = "Stage : " + StageValue;
-        }
-        
-    }
+    //public void SetStage(string StageValue)
+    //{
+    //    if(SceneName() != "BossScene")
+    //    {
+    //        UI.transform.GetChild(4).GetComponent<Text>().text = "Stage : " + StageValue;
+    //    }
+
+    //}
 
     public void SetEnemyCount(string EnemyCountValue)
     {
         UI.transform.GetChild(3).GetComponent<Text>().text = "EnemyCount : " + EnemyCountValue;
     }
 
-    public string SceneName()
-    {
-        return SceneManager.GetActiveScene().name;
-    }
+   
 
     public void StageEnd()
     {
         UI.transform.GetChild(5).gameObject.SetActive(true);
+    }
+
+    public void GameOver()
+    {
+        UI.transform.GetChild(6).gameObject.SetActive(true);
     }
 
     public void SetStatsName(string NameValue)
@@ -51,7 +63,7 @@ public class UIManager : MonoBehaviour
     }
     public void SetStageValue(int Value)
     {
-        ChacterData SetData = GameObject.Find("Player").GetComponent<CharacterParent>().GetGameData(); ;
+        CharacterData SetData = GameObject.Find("Player").GetComponent<CharacterParent>().GetGameData(); ;
         switch (Name)
         {
             case "PhysicsDef":
@@ -90,31 +102,32 @@ public class UIManager : MonoBehaviour
             case "Hp":
                 SetData.Hp += 200;
                 GameObject.Find("Player").GetComponent<CharacterParent>().SetGameData(SetData);
-                break;
+                    break;
 
         }
     }
 
-   protected void SceneEnd(int Stage)
-    {
-        StartCoroutine(CameraFadeOut(Stage));
-    }
+    #region Camera Fade
 
-    IEnumerator CameraFadeOut(int Stage)
+    protected IEnumerator CameraFadeOut()
     {
-        GameObject.Find("Main Camera").transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
-        for (int i=0; i<10; i++)
+        MainCamera.transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+        for (int i = 0; i < 10; i++)
         {
-            GameObject.Find("Main Camera").transform.GetChild(0).GetComponent<SpriteRenderer>().color += new Color(0, 0,0, 0.1f);
+            MainCamera.transform.GetChild(0).GetComponent<SpriteRenderer>().color += new Color(0, 0, 0, 0.1f);
             yield return null;
         }
+    }
 
-        SceneManager.LoadScene(Stage);
-        for(int i=0; i<10; i++)
+    protected IEnumerator CameraFadeIn()
+    {
+        for (int i = 0; i < 10; i++)
         {
-            GameObject.Find("Main Camera").transform.GetChild(0).GetComponent<SpriteRenderer>().color -= new Color(0, 0, 0, 0.1f);
+            MainCamera.transform.GetChild(0).GetComponent<SpriteRenderer>().color -= new Color(0, 0, 0, 0.1f);
             yield return null;
         }
-        GameObject.Find("Main Camera").transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
+        MainCamera.transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
+        SceneLoadData();
     }
+    #endregion
 }

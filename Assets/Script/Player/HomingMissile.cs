@@ -35,11 +35,10 @@ public class HomingMissile : MonoBehaviour
                             MinDir.y = Enemy[i].transform.position.y;
                             Num = i;
                         }
-                        ShootingStart = true;
 
                     }
                 }
-                else if(upgrade == true)
+                else 
                 {
                     if (Vector3.Distance(Enemy[i].transform.position, transform.position) < Vector3.Distance(MinDir, transform.position) && Enemy[i].GetComponentInParent<CharacterParent>().Check == false)
                     {
@@ -47,11 +46,11 @@ public class HomingMissile : MonoBehaviour
                         MinDir.y = Enemy[i].transform.position.y;
                         Num = i;
                     }
-                    ShootingStart = true;
 
                 }
 
             }
+                    ShootingStart = true;
             Enemy[Num].GetComponentInParent<CharacterParent>().Check = true;
         }
         else
@@ -62,13 +61,6 @@ public class HomingMissile : MonoBehaviour
 
     }
     // Start is called before the first frame update
-    void Start()
-    {
-       
-
-       
-
-    }
 
     // Update is called once per frame
     void Update()
@@ -80,8 +72,8 @@ public class HomingMissile : MonoBehaviour
         if (ShootingStart)
         {
             Vector3 ToDir = Vector3.Normalize(Enemy[Num].transform.position - transform.position);
-            transform.position += new Vector3(ToDir.x * Time.deltaTime * Speed, ToDir.y * Time.deltaTime * Speed);
-            transform.Rotate(0, 0, Quaternion.Dot(Enemy[Num].transform.rotation, transform.rotation), Space.World);
+            transform.position += ToDir * Time.deltaTime * Speed;
+            transform.rotation = Quaternion.Euler(0, 0, Vector3.Dot(Enemy[Num].transform.position, transform.position));
 
         }
     }

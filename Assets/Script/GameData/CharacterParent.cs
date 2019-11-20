@@ -27,20 +27,34 @@ public class CharacterParent : Data
         {
             BoomAnimation.gameObject.SetActive(true);   
             BoomAnimation.Play(1);
-            for (int i=0; i<transform.childCount-1; i++)
+            for (int i=0; i<transform.childCount-2; i++)
             {
                 if (transform.GetChild(i).gameObject.activeSelf == true || BoomAnimation.GetCurrentAnimatorStateInfo(0).normalizedTime <1.0f)
                 {
                     return;
                 }
-                if (i == transform.childCount-2)
+                if (i == transform.childCount-3)
                 {
-                    Destroy(this.gameObject);
+                    if(GetCharacter(gameObject) != CharacterList.PlayerCharacter)
+                    {
+                        FindObjectOfType<StageManager>().EnemyDestorty(transform.GetChild(0).gameObject);
+                        Destroy(gameObject);
+
+                    }
+                    else
+                    {
+                        GameData.Hp = GetMaxHp();
+                        Destroy(transform.GetChild(0).gameObject);
+                    }
                 }
             }
             
         }
         
+    }
+
+    private void OnDestroy()
+    {
     }
 
     public void Damage(float Damage,DefList def)

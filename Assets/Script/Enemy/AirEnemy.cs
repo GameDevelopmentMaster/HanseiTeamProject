@@ -8,7 +8,7 @@ public class AirEnemy : MonoBehaviour
     public bool Check = false;
     float Speed;
     //[Range(0.1f, 10)]
-    float SkilTIming =0;
+    float SkilTIming = 0;
     float SkilCoolTime;
     Dir dir;
     Vector2 LeftPos;
@@ -29,22 +29,22 @@ public class AirEnemy : MonoBehaviour
                 SkilCoolTime = 3f;
                 break;
         }
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(GameObject.Find("HomingMissile") == null)
+        if (GameObject.Find("HomingMissile") == null)
         {
             Check = false;
         }
-        if((transform.parent.GetComponent<CharacterParent>().Code == 3 || transform.parent.GetComponent<CharacterParent>().Code == 6) && SkilTIming > SkilCoolTime)
+        if ((transform.parent.GetComponent<CharacterParent>().Code == 3 || transform.parent.GetComponent<CharacterParent>().Code == 6) && SkilTIming > SkilCoolTime)
         {
             transform.parent.GetChild(21).gameObject.SetActive(true);
             SkilTIming = 0;
         }
-     switch (dir)
+        switch (dir)
         {
             case Dir.Left:
                 transform.position -= transform.right * Time.deltaTime * 10;
@@ -54,7 +54,7 @@ public class AirEnemy : MonoBehaviour
                 break;
         }
 
-        if(transform.position.x < LeftPos.x)
+        if (transform.position.x < LeftPos.x)
         {
             dir = Dir.Right;
         }
@@ -62,7 +62,7 @@ public class AirEnemy : MonoBehaviour
         {
             dir = Dir.Left;
         }
-        if(transform.position.x > GameObject.Find("Player").transform.GetChild(0).position.x)
+        if (transform.position.x > GameObject.Find("Player").transform.GetChild(0).position.x)
         {
             transform.GetComponent<SpriteRenderer>().flipX = false;
         }
@@ -72,28 +72,29 @@ public class AirEnemy : MonoBehaviour
         }
         if (BulletTiming > transform.parent.GetComponent<CharacterParent>().GetGameData().AtkSpeed)
         {
-           int count = 0;
-           for(int i=1; i<this.transform.parent.childCount-1; i++)
+            int count = 0;
+            for (int i = 1; i < this.transform.parent.childCount - 1; i++)
             {
-                if(this.transform.parent.GetChild(i).gameObject.activeSelf == false)
+                if (this.transform.parent.GetChild(i).gameObject.activeSelf == false)
                 {
                     this.transform.parent.GetChild(i).position = new Vector2(this.transform.position.x - 1.5f, this.transform.position.y - 0.6f);
                     count = i;
-                    break;  
+                    break;
                 }
             }
             this.transform.parent.GetChild(count).gameObject.SetActive(true);
             BulletTiming = 0;
         }
-        BulletTiming  += Time.deltaTime;
-        if(transform.parent.GetChild(21).gameObject.activeSelf == false)
+        BulletTiming += Time.deltaTime;
+        if (transform.parent.GetChild(21).gameObject.activeSelf == false)
         {
             SkilTIming += Time.deltaTime;
         }
-        
     }
 
-   
+    public void OnDestroy()
+    {
+        Destroy(transform.parent.gameObject);
+    }
 
-    
 }
